@@ -1,3 +1,24 @@
+
+"""
+Домашнее задание. Сборка витрины на Spark
+
+Инструкция:
+
+Загрузить данные из https://www.kaggle.com/datasets/AnalyzeBoston/crimes-in-boston.
+
+Проверить данные на корректность, наличие дубликатов. Очистить.
+
+Собрать витрину (агрегат по районам (поле district)) со следующими метриками:
+crimes_total — общее количество преступлений в этом районе;
+crimes_monthly — медиана числа преступлений в месяц в этом районе;
+frequent_crime_types — три самых частых crime_type за всю историю наблюдений в этом районе, объединенных через запятую с одним пробелом “, ” и расположенных в порядке убывания частоты;
+crime_type — первая часть NAME из таблицы offense_codes, разбитого по разделителю “-” (например, если NAME “BURGLARY-COMMERCIAL-ATTEMPT”, то crime_type “BURGLARY”);
+lat — широта координаты района, рассчитанная как среднее по всем широтам инцидентов;
+lng — долгота координаты района, рассчитанная как среднее по всем долготам инцидентов.
+
+Сохранить витрину в один файл в формате .parquet в папке path/to/output_folder.
+"""
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, count, avg, concat_ws, collect_list, expr, split, first, row_number
 from pyspark.sql.window import Window
@@ -64,7 +85,10 @@ def main(input_path, output_path):
         .join(frequent_crimes_df, "DISTRICT", "inner")
 
     # Сохранение результата
-    final_df.write.parquet(output_path, mode="overwrite")
+    #final_df.write.parquet(output_path, mode="overwrite")
+
+    # Сохранение результата в один файл Parquet
+    final_df.coalesce(1).write.parquet(output_path, mode="overwrite")
 
     # Остановка Spark
     spark.stop()
