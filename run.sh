@@ -1,0 +1,1 @@
+spark-submit --master local[*] home_task.py ./datasets ./output
